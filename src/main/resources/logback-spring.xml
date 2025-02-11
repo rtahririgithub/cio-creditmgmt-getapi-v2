@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<configuration>
+<!-- <configuration debug="true" scan="true" scanPeriod="30 minutes">  -->
+
+    <springProfile name="default">
+    	<property name="MY_LOG_LEVEL" value="debug"/>
+        <conversionRule conversionWord="mask" converterClass="com.telus.credit.advice.LogMaskConverter" />
+
+		<appender name="CONSOLE-APPENDER" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder>
+				<!-- <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}:[%magenta(%X{correlationId})][%thread][%cyan(%-40logger{40})][logseveritylevel=%-5level]:%msg%n</Pattern> -->
+				<Pattern>[%d{HH:mm:ss.SSS}]:[%cyan(%-20logger{20})][logseveritylevel=%-5level]:%mask(%msg) %n</Pattern>
+			</encoder>
+		</appender>
+
+        <logger name="com.telus.credit" level="${MY_LOG_LEVEL}" additivity="false">
+            <appender-ref ref="CONSOLE-APPENDER"/>
+            <!-- <appender-ref ref="FLAT-FILE-APPENDER"/>  -->
+        </logger>
+        <logger name="org.springframework" level="${MY_LOG_LEVEL}" additivity="false">
+            <appender-ref ref="CONSOLE-APPENDER"/>
+            <!-- <appender-ref ref="FLAT-FILE-APPENDER"/>  -->
+        </logger>
+
+        <root level="${MY_LOG_LEVEL}">
+            <appender-ref ref="CONSOLE-APPENDER"/>
+            <!-- <appender-ref ref="FLAT-FILE-APPENDER"/>  -->
+        </root>
+    </springProfile>
+
+
+  <springProfile name="cloud-dev">
+  	<property name="MY_LOG_LEVEL" value="debug"/>
+        <conversionRule conversionWord="mask" converterClass="com.telus.credit.advice.LogMaskConverter" />
+
+		<appender name="CONSOLE-APPENDER" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder>
+				<!-- <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}:[%magenta(%X{correlationId})][%thread][%cyan(%-40logger{40})][logseveritylevel=%-5level]:%msg%n</Pattern> -->
+				<Pattern>[%d{HH:mm:ss.SSS}]:[%cyan(%-20logger{20})][logseveritylevel=%-5level]:%mask(%msg) %n</Pattern>
+			</encoder>
+		</appender>
+
+        <logger name="com.telus.credit" level="${MY_LOG_LEVEL}" additivity="false">
+            <appender-ref ref="CONSOLE-APPENDER"/>
+            <!-- <appender-ref ref="FLAT-FILE-APPENDER"/>  -->
+        </logger>
+        <logger name="org.springframework" level="${MY_LOG_LEVEL}" additivity="false">
+            <appender-ref ref="CONSOLE-APPENDER"/>
+            <!-- <appender-ref ref="FLAT-FILE-APPENDER"/>  -->
+        </logger>
+
+        <root level="${MY_LOG_LEVEL}">
+            <appender-ref ref="CONSOLE-APPENDER"/>
+            <!-- <appender-ref ref="FLAT-FILE-APPENDER"/>  -->
+        </root>
+    </springProfile>
+      <springProfile name="cloud-it04">
+      	<property name="MY_LOG_LEVEL" value="debug"/>
+        <conversionRule conversionWord="mask" converterClass="com.telus.credit.advice.LogMaskConverter" />
+
+		<appender name="CONSOLE-APPENDER" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder>
+				<!-- <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}:[%magenta(%X{correlationId})][%thread][%cyan(%-40logger{40})][logseveritylevel=%-5level]:%msg%n</Pattern> -->
+				<Pattern>[%d{HH:mm:ss.SSS}]:[%cyan(%-20logger{20})][logseveritylevel=%-5level]:%mask(%msg) %n</Pattern>
+			</encoder>
+		</appender>
+
+        <logger name="com.telus.credit" level="${MY_LOG_LEVEL}" additivity="false">
+            <appender-ref ref="CONSOLE-APPENDER"/>
+            <!-- <appender-ref ref="FLAT-FILE-APPENDER"/>  -->
+        </logger>
+        <logger name="org.springframework" level="${MY_LOG_LEVEL}" additivity="false">
+            <appender-ref ref="CONSOLE-APPENDER"/>
+            <!-- <appender-ref ref="FLAT-FILE-APPENDER"/>  -->
+        </logger>
+
+        <root level="${MY_LOG_LEVEL}">
+            <appender-ref ref="CONSOLE-APPENDER"/>
+            <!-- <appender-ref ref="FLAT-FILE-APPENDER"/>  -->
+        </root>
+    </springProfile>
+    
+ 
+      <springProfile name="cloud-it03">
+      	<property name="MY_LOG_LEVEL" value="debug"/>
+        <conversionRule conversionWord="mask" converterClass="com.telus.credit.advice.LogMaskConverter" />
+
+		<appender name="CONSOLE-APPENDER" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder>
+				<!-- <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}:[%magenta(%X{correlationId})][%thread][%cyan(%-40logger{40})][logseveritylevel=%-5level]:%msg%n</Pattern> -->
+				<Pattern>[%d{HH:mm:ss.SSS}]:[%cyan(%-20logger{20})][logseveritylevel=%-5level]:%mask(%msg) %n</Pattern>
+			</encoder>
+		</appender>
+
+        <logger name="com.telus.credit" level="${MY_LOG_LEVEL}" additivity="false">
+            <appender-ref ref="CONSOLE-APPENDER"/>
+            <!-- <appender-ref ref="FLAT-FILE-APPENDER"/>  -->
+        </logger>
+        <logger name="org.springframework" level="${MY_LOG_LEVEL}" additivity="false">
+            <appender-ref ref="CONSOLE-APPENDER"/>
+            <!-- <appender-ref ref="FLAT-FILE-APPENDER"/>  -->
+        </logger>
+
+        <root level="${MY_LOG_LEVEL}">
+            <appender-ref ref="CONSOLE-APPENDER"/>
+            <!-- <appender-ref ref="FLAT-FILE-APPENDER"/>  -->
+        </root>
+    </springProfile>
+	
+     <springProfile name="cloud-prd">
+     	<property name="MY_LOG_LEVEL" value="debug"/>
+        <conversionRule conversionWord="mask" converterClass="com.telus.credit.advice.LogMaskConverter" />
+
+		<appender name="CONSOLE-APPENDER" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder>
+				<!-- <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}:[%magenta(%X{correlationId})][%thread][%cyan(%-40logger{40})][logseveritylevel=%-5level]:%msg%n</Pattern> -->
+				<Pattern>[%d{HH:mm:ss.SSS}]:[%cyan(%-20logger{20})][logseveritylevel=%-5level]:%mask(%msg) %n</Pattern>
+			</encoder>
+		</appender>
+
+        <logger name="com.telus.credit" level="${MY_LOG_LEVEL}" additivity="false">
+            <appender-ref ref="CONSOLE-APPENDER"/>
+            <!-- <appender-ref ref="FLAT-FILE-APPENDER"/>  -->
+        </logger>
+        <logger name="org.springframework" level="${MY_LOG_LEVEL}" additivity="false">
+            <appender-ref ref="CONSOLE-APPENDER"/>
+            <!-- <appender-ref ref="FLAT-FILE-APPENDER"/>  -->
+        </logger>
+
+        <root level="${MY_LOG_LEVEL}">
+            <appender-ref ref="CONSOLE-APPENDER"/>
+            <!-- <appender-ref ref="FLAT-FILE-APPENDER"/>  -->
+        </root>
+    </springProfile>
+	
+</configuration>

@@ -1,0 +1,1273 @@
+swagger: '2.0'
+info:
+  title: Customer Credit Management
+  version: '0.1'
+  description: This API manages customer credit profile and credit worthiness. Currently only wireless customers are supported.
+  contact:
+    name: Credit and Collections Team
+    email: reza.tahriri@telus.com
+    
+host: tbd
+basePath: /creditManagement/v2/
+schemes:
+  - http
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+tags:
+  - name: credit profile
+securityDefinitions:
+  ApiKeyAuth:
+    type: apiKey
+    in: header
+    name: apikey
+security:
+  - ApiKeyAuth: []
+x-tmfdomain: customer
+x-cmdbid: 14588
+x-api-engagement-num: 255
+x-apiname: customerCreditManagement
+paths:
+  /creditProfile:
+    get:
+      operationId: getCreditProfile
+      summary: List or find credit profile objects
+      description: |-
+        This operation returns a list of credit profiles that matches the search criteria.
+        Wireless customers have one billing account number.
+        Wireline customers can have one or more billing account numbers.
+        
+        Example:
+          * GET /creditProfile?billingAccountNumber=70792556
+
+      tags:
+        - credit profile
+      parameters:
+        - name: x-correlation-id
+          type: string
+          in: header
+          required: false
+          description: Unique identifier to correlate client server calls across tiers. This value should be unique for every request. A random UUID can be used.
+        - name: billingAccountNumber
+          description: >-
+            Customer billing account number.
+          required: false
+          in: query
+          type: string
+        - name: creditScore
+          description: >-
+            Credit Score.
+          required: false
+          in: query
+          type: integer
+      responses:
+        '200':
+          description: Success
+          #headers:
+          #  X-Result-Count:
+          #    description: Actual number of items returned in the response body
+          #    type: integer
+          #  X-Total-Count:
+          #   description: Total number of items matching criteria
+          #    type: integer
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/CreditProfile'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+            
+    post:
+      operationId: postCreditProfile
+      summary: Creates a credit profile
+      description: This operation creates a credit profile.
+      tags:
+        - credit profile
+      parameters:
+        - name: creditProfile
+          description: The credit profile to create
+          required: true
+          schema:
+            $ref: '#/definitions/CreditProfile_Create'
+            #$ref: '#/definitions/CreditProfileToCreate'
+            #$ref: '#/definitions/CreditProfile'
+          in: body
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/CreditProfile'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+            
+  '/creditProfile/{id}':
+    get:
+      operationId: getCreditProfileById
+      summary: Retrieve credit profile details
+      description: This operation retrieves a credit profile entity.
+      tags:
+        - credit profile
+      parameters:
+        - name: x-correlation-id
+          type: string
+          in: header
+          required: false
+          description: Unique identifier to correlate client server calls across tiers. This value should be unique for every request. A random UUID can be used.      
+        - name: id
+          type: string
+          description: Credit profile unique identifier
+          required: true
+          in: path
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/CreditProfile'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+    patch:
+      operationId: patchCreditProfileById
+      summary: Updates the credit profile
+      description: This operation updates the credit profile
+      tags:
+        - credit profile
+      parameters:
+        - name: id
+          type: string
+          description: Identifier of the credit profile
+          required: true
+          in: path
+        - name: creditProfile
+          description: The credit profile to update
+          required: true
+          schema:
+            $ref: '#/definitions/CreditProfile_Update'
+          in: body
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/CreditProfile'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      operationId: deleteCreditProfileById
+      summary: Deletes the credit profile
+      description: Deletes the credit profile
+      tags:
+        - credit profile
+      parameters:
+        - name: id
+          type: string
+          description: Identifier of the credit profile
+          required: true
+          in: path
+      responses:
+        '204':
+          description: Deleted
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+
+  /hub:
+    post:
+      operationId: postHub
+      summary: Register a listener
+      description: >-
+        Subscribe. Sets the communication endpoint address the service instance must use to deliver notification information
+      tags:
+        - events subscription
+      parameters:
+        - name: data
+          schema:
+            $ref: '#/definitions/EventSubscriptionInput'
+          required: true
+          in: body
+          description: Data containing the callback endpoint to deliver the information
+      responses:
+        '201':
+          description: Successfully registered the listener. Subscribed.
+          schema:
+            $ref: '#/definitions/EventSubscription'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+
+  '/hub/{id}':
+    get:
+      operationId: getHubById
+      summary: Get details of a registered listener
+      description: Get details of a registered listener
+      tags:
+        - events subscription
+      parameters:
+        - name: id
+          type: string
+          required: true
+          in: path
+          description: The id of the registered listener
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/EventSubscription'
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+            
+    delete:
+      operationId: deleteHub
+      summary: Unregister a listener
+      description: >-
+        Unsubscribe. Removes the communication endpoint address the service instance uses to deliver notification information.
+      tags:
+        - events subscription
+      parameters:
+        - name: id
+          type: string
+          required: true
+          in: path
+          description: The id of the registered listener
+      responses:
+        '204':
+          description: Deleted
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: Not Found
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+
+
+  '/listener/billingAccountAttributeValueChangeEvent':
+    post:
+      operationId: listenToBillingAccountAttributeValueChangeEvent
+      summary: Client listener for entity BillingAccountAttributeValueChangeEvent
+      description: Example of a client listener for receiving the notification BillingAccountAttributeValueChangeEvent
+      tags:
+        - notification listeners
+      parameters:
+        - name: data
+          required: true
+          in: body
+          description: The event data
+          schema:
+            $ref: '#/definitions/BillingAccountAttributeValueChangeEvent'
+      responses:
+        '201':
+          description: Notified
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+            
+
+  '/listener/billingAccountStateChangeEvent':
+    post:
+      operationId: listenToBillingAccountStateChangeEvent
+      summary: Client listener for entity BillingAccountStateChangeEvent
+      description: Example of a client listener for receiving the notification BillingAccountStateChangeEvent
+      tags:
+        - notification listeners
+      parameters:
+        - name: data
+          required: true
+          in: body
+          description: The event data
+          schema:
+            $ref: '#/definitions/BillingAccountStateChangeEvent'
+      responses:
+        '201':
+          description: Notified
+        '400':
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Error'
+
+
+            
+definitions:
+  CreditProfile:
+    type: object
+    description: 'Credit profile for the party (containing credit scoring, ...). By default only the current credit profile  is retrieved. It can be used as a list to give the party credit profiles history, the first one in the list will be the current one.'
+    required:
+      - id
+      - creditProfileDate
+    properties:
+      id:
+        type: string
+        description: Unique identifier for credit profile
+      billingAccountNumber:
+        type: string
+        description: Billing Account Number
+      href:
+        type: string
+        description: Url used to reference the credit profile
+      creditProfileDate:
+        type: string
+        format: date-time
+        description: The date the profile was established
+        example: '2018-05-29T03:35:55.393Z'
+      creditRiskRating:
+        type: integer
+        example: 2210
+        description: This is an integer whose value is used to rate the risk
+      creditScore:
+        type: integer
+        example: 300
+        description: A measure of a person or organizations creditworthiness calculated on the basis of a combination of factors such as their income and credit history
+      validFor:
+        $ref: '#/definitions/TimePeriod'        
+
+      '@type':
+        type: string
+        description: The entity name. TelusCreditProfile
+        example: TelusCreditProfile
+        
+      '@baseType':
+        type: string
+        description: The super class, which is CreditProfile
+        example: CreditProfile
+    
+      customerRef:
+        $ref: '#/definitions/CustomerRef_Base'
+
+      ratingCharacteristic:
+        $ref: '#/definitions/RatingCharacteristic_Base'
+
+      partyRoleRisk:
+        type: array
+        items:
+          $ref: '#/definitions/PartyRoleRisk_Base'
+
+
+  CreditProfile_Create:
+    type: object
+    description: |-
+    properties:
+      creditProfileDate:
+        type: string
+        format: date-time
+        description: The date the profile was established
+        example: '2018-05-29T03:35:55.393Z'
+      creditRiskRating:
+        type: integer
+        example: 2210
+        description: This is an integer whose value is used to rate the risk
+      creditScore:
+        type: integer
+        example: 300
+        description: A measure of a person or organizations creditworthiness calculated on the basis of a combination of factors such as their income and credit history
+      validFor:
+        $ref: '#/definitions/TimePeriod'        
+
+      '@type':
+        type: string
+        description: The entity name. TelusCreditProfile
+        example: TelusCreditProfile
+        
+      '@baseType':
+        type: string
+        description: The super class, which is CreditProfile
+        example: CreditProfile
+    
+      customerRef:
+        $ref: '#/definitions/CustomerRef_Base'
+
+      ratingCharacteristic:
+        $ref: '#/definitions/RatingCharacteristic_Base'
+
+      partyRoleRisk:
+        type: array
+        items:
+          $ref: '#/definitions/PartyRoleRisk_Base'
+
+
+  CreditProfile_Update:
+    type: object
+    description: |-
+    properties:
+      creditProfileDate:
+        type: string
+        format: date-time
+        description: The date the profile was established
+        example: '2018-05-29T03:35:55.393Z'
+      creditRiskRating:
+        type: integer
+        example: 2210
+        description: This is an integer whose value is used to rate the risk
+      creditScore:
+        type: integer
+        example: 300
+        description: A measure of a person or organizations creditworthiness calculated on the basis of a combination of factors such as their income and credit history
+      validFor:
+        $ref: '#/definitions/TimePeriod'        
+
+      '@type':
+        type: string
+        description: The entity name. TelusCreditProfile
+        example: TelusCreditProfile
+        
+      '@baseType':
+        type: string
+        description: The super class, which is CreditProfile
+        example: CreditProfile
+    
+      customerRef:
+        $ref: '#/definitions/CustomerRef_Base'
+
+      ratingCharacteristic:
+        $ref: '#/definitions/RatingCharacteristic_Base'
+
+      partyRoleRisk:
+        type: array
+        items:
+          $ref: '#/definitions/PartyRoleRisk_Base'
+
+
+  CustomerRef_Base:
+    type: object
+    properties:
+      engagedParty:
+        type: object
+        description: A related party (RelatedParty). The party - an organization or an individual - that is engaged as a customer.
+        properties:
+          '@referredType':
+            type: string
+            description: The actual type of the target instance when needed for disambiguation.
+            example: 'Individual'
+
+          id:
+            type: string
+            description: The customer ID
+          role:
+            type: string
+            description: Role played by the customer
+            example: 'Wireless customer'
+          
+          '@type': 
+            type: string
+            example: TelusCreditIndividual
+            
+          '@baseType':
+            type: string
+            example: Individual
+          birthDate:
+            type: string
+            format: date
+            description: The customer's birth date (YYYY-MM-DD)
+            
+          contactMedium:
+            type: object
+            properties:
+              id:
+                type: string
+              validFor:
+                $ref: '#/definitions/TimePeriod'
+              characteristic:
+                type: object
+                properties:
+                  street1:
+                    type: string
+                  street2:
+                    type: string
+                  street3:
+                    type: string
+                  street4:
+                    type: string
+                  city:
+                    type: string
+                  stateOrProvince:
+                    type: string
+                  postcode:
+                    type: string
+                  country:
+                    type: string
+
+          driverLicenseIdentification:
+            type: object
+            properties:
+              '@type':
+                type: string
+                example: TelusDriverLicenseIdentification
+              '@baseType':
+                type: string
+                example: IndividualIdentification
+              licenseNr:
+                type: string
+              provinceCd:
+                type: string
+              expiryDate:
+                type: string
+                format: date
+          socialSecurityNrIdentification:
+            type: object
+            properties:
+              '@baseType':
+                type: string
+                example: IndividualIdentification
+              socialSecurityNr:
+                type: string
+          creditCardIdentification:
+            type: object
+            properties:
+              '@type':
+                type: string
+                example: TelusCreditCardIdentification
+              '@baseType':
+                type: string
+                example: IndividualIdentification
+              tokenTxt:
+                type: string
+              firstSixNum:
+                type: string
+              lastFourNum:
+                type: string
+          healthCardIdentification:
+            type: object
+            properties:
+              '@type':
+                type: string
+                example: TelusHealthCardIdentification
+              '@baseType':
+                type: string
+                example: IndividualIdentification
+              cardNr:
+                type: string
+          passportIdentification:
+            type: object
+            properties:
+              '@type':
+                type: string
+                example: TelusPassportIdentification
+              '@baseType':
+                type: string
+                example: IndividualIdentification
+              passportNr:
+                type: string
+              issuingCountry:
+                type: string
+          provincialIdentityCardIdentification:
+            type: object
+            properties:
+              '@type':
+                type: string
+                example: TelusProvincialIdentityCardIdentification
+              '@baseType':
+                type: string
+                example: IndividualIdentification
+              cardNr:
+                type: string
+              issuingProvince:
+                type: string
+          companyRegistrationIdentification:
+            type: object
+            properties:
+              '@type':
+                type: string
+                example: TelusCompanyRegistrationIdentification
+              '@baseType':
+                type: string
+                example: OrganizationIdentification
+              registrationTypeCd:
+                type: string
+              registrationNr:
+                type: string
+
+          accountRef:
+            type: object
+            description: Account reference.
+            properties:
+              '@referredType':
+                type: string
+                example: 'BillingAccount'
+              accountNr:
+                type: string
+                description: Billing account number
+
+  PartyRoleRisk_Base:
+    type: object
+    properties:
+      '@type':
+        type: string
+        example: TelusRisk
+      id:
+        type: string
+        description: The warning history Id
+        example: 53
+      status:
+        type: string
+        example: unverified
+      validFor:
+        $ref: '#/definitions/TimePeriod'
+      riskName:
+        type: string
+        example: 'delinguent account'
+        description: WarningCd
+      riskCategory:
+        type: string
+        example: SEW
+        description: WarningCategoryCd
+      riskType:
+        type: string
+        example: WT3
+        description: WarningTypeCd
+      riskDetectionDate:
+        type: string
+        format: date-time
+        description: warningDetectionDt
+
+      riskAcceptance:
+        type: object
+        properties:
+          acceptanceDate:
+            type: string
+            format: date-time
+            description: approval date
+          externalReference:
+            type: object
+            properties:
+              id:
+                type: string
+                description: approval external Id
+
+      relatedIdentification:
+        type: object
+        properties:
+          identificationType:
+            type: string
+            example: SIN
+            description: WarningItemTypeCd
+
+      relatedAssessment:
+        type: object
+        properties:
+          id:
+            type: string
+            
+      characteristic:
+        type: object
+        properties:
+          resolvedPermanentlyFlag:
+            type: string
+      isDeleted:
+        type: boolean
+        default: false
+  
+
+
+  RatingCharacteristic_Base:
+    type: object
+    description: Telus credit worthiness characteristic
+    properties:
+      '@type':
+        type: string
+        example: TelusRatingCharacteristic
+      '@baseType':
+        type: string
+        example: Characteristic
+      #creditAssessmentId:
+      #  type: string
+      #  example: 572088
+      creditScoreTypeCode:
+        type: string
+        example: Custom
+      agencyDecisionCode:
+        type: string
+        example: V63
+      agencyDecisionDescription:
+        type: string
+      creditProgramName:
+        type: string
+        example: NDP
+      creditClassCode:
+        type: string
+        example: V
+      creditClassDate:
+        type: string
+        format: date-time
+      creditDecisionCode:
+        type: string
+        example: TNDPELCM2210
+      riskLevelDecisionCode:
+        type: string
+        example: TNSBCWOCM003
+        description: Reference corresponding to the credit rating.
+      creditDecisionDate:
+        type: string
+        format: date-time
+      assessmentMessageCode:
+        type: string
+      assessmentMessage:
+        type: string
+
+  BillingAccountAttributeValueChangeEvent:
+    type: object
+    description: The notification data structure
+    properties:
+      eventId:
+        type: string
+        description: The identifier of the notification.
+      eventTime:
+        type: string
+        format: date-time
+        description: Time of the event occurrence.
+      eventType:
+        type: string
+        description: The type of the notification.
+      correlationId:
+        type: string
+        description: The correlation id for this event.
+      title:
+        type: string
+        description: The title of the event.
+      description:
+        type: string
+        description: An explnatory of the event.
+      priority:
+        type: string
+        description: A priority.
+      timeOcurred:
+        type: string
+        format: date-time
+        description: The time the event occured.
+      payload:
+        $ref: '#/definitions/BillingAccountAttributeValueChangeEventPayload'
+
+  BillingAccountAttributeValueChangeEventPayload:
+    type: object
+    description: The event data structure
+    properties:
+      billingAccount:
+        $ref: '#/definitions/BillingAccount'
+
+  BillingAccountStateChangeEvent:
+    type: object
+    description: The notification data structure
+    properties:
+      id:
+        type: string
+        description: Identifier of the Process flow
+      eventId:
+        type: string
+        description: The identifier of the notification.
+      eventTime:
+        type: string
+        format: date-time
+        description: Time of the event occurrence.
+      eventType:
+        type: string
+        description: The type of the notification.
+      correlationId:
+        type: string
+        description: The correlation id for this event.
+      title:
+        type: string
+        description: The title of the event.
+      description:
+        type: string
+        description: An explanatory of the event.
+      priority:
+        type: string
+        description: A priority.
+      timeOcurred:
+        type: string
+        format: date-time
+        description: The time the event occured.
+      payload:
+        $ref: '#/definitions/BillingAccountStateChangeEventPayload'
+
+  BillingAccountStateChangeEventPayload:
+    type: object
+    description: The event data structure
+    properties:
+      billingAccount:
+        $ref: '#/definitions/BillingAccount'
+
+  BillingAccount:
+    type: object
+    properties:
+      accountNr:
+        type: string
+      relatedParty:
+        type: object
+        properties:
+          birthDate:
+            type: string
+          contactMedium:
+            type: object
+            properties:
+              id:
+                type: string
+              validFor:
+                $ref: '#/definitions/TimePeriod'
+              characteristic:
+                type: object
+                properties:
+                  street1:
+                    type: string
+                  street2:
+                    type: string
+                  street3:
+                    type: string
+                  street4:
+                    type: string
+                  city:
+                    type: string
+                  stateOrProvince:
+                    type: string
+                  postcode:
+                    type: string
+                  country:
+                    type: string
+
+          driverLicenseIdentification:
+            type: object
+            properties:
+              '@type':
+                type: string
+                example: TelusDriverLicenseIdentification
+              '@baseType':
+                type: string
+                example: IndividualIdentification
+              licenseNr:
+                type: string
+              provinceCd:
+                type: string
+              expiryDate:
+                type: string
+                format: date
+          socialSecurityNrIdentification:
+            type: object
+            properties:
+              '@baseType':
+                type: string
+                example: IndividualIdentification
+              socialSecurityNr:
+                type: string
+          creditCardIdentification:
+            type: object
+            properties:
+              '@type':
+                type: string
+                example: TelusCreditCardIdentification
+              '@baseType':
+                type: string
+                example: IndividualIdentification
+              tokenTxt:
+                type: string
+              firstSixNum:
+                type: string
+              lastFourNum:
+                type: string
+          healthCardIdentification:
+            type: object
+            properties:
+              '@type':
+                type: string
+                example: TelusHealthCardIdentification
+              '@baseType':
+                type: string
+                example: IndividualIdentification
+              cardNr:
+                type: string
+          passportIdentification:
+            type: object
+            properties:
+              '@type':
+                type: string
+                example: TelusPassportIdentification
+              '@baseType':
+                type: string
+                example: IndividualIdentification
+              passportNr:
+                type: string
+              issuingCountry:
+                type: string
+          provincialIdentityCardIdentification:
+            type: object
+            properties:
+              '@type':
+                type: string
+                example: TelusProvincialIdentityCardIdentification
+              '@baseType':
+                type: string
+                example: IndividualIdentification
+              cardNr:
+                type: string
+              issuingProvince:
+                type: string
+          companyRegistrationIdentification:
+            type: object
+            properties:
+              '@type':
+                type: string
+                example: TelusCompanyRegistrationIdentification
+              '@baseType':
+                type: string
+                example: OrganizationIdentification
+              registrationTypeCd:
+                type: string
+              registrationNr:
+                type: string
+          creditProfile:
+            type: object
+            properties:
+              creditScore:
+                type: string
+              ratingCharacteristic:
+                type: object
+                properties:
+                  agencyDecisionCode:
+                    type: string
+                  creditClassCode:
+                    type: string
+                  creditLimitAmount:
+                    type: string
+                  depositListProductTypeCode:
+                    type: string
+                  depositListDepositAmount:
+                    type: string
+
+        
+
+  CreditIdentification:
+    type: object
+    properties:
+      driverLicense:
+        type: object
+        required:
+          - driverLicenseNumber
+          - provinceCd
+        properties:
+          driverLicenseNumber:
+            type: string
+          provinceCd:
+            type: string
+          expiryDate:
+            type: string
+            format: date
+      socialInsuranceNum:
+        type: string
+      creditCardTokenTxt:
+        type: string
+      creditCardFirstSixNum:
+        type: string
+      creditCardLastFourNum:
+        type: string
+      healthCardNumber:
+        type: string
+      passport:
+        type: object
+        required:
+          - passportNumber
+          - countryCd
+        properties:
+          passportNumber:
+            type: string
+          countryCd:
+            type: string
+      provincialIdCard:
+        type: object
+        required:
+          - provincialId
+          - provincialCd
+        properties:
+          provincialId:
+            type: string
+          provincialCd:
+            type: string
+      businessRegistration:
+        type: object
+        properties:
+          businessRegistrationTypeCd:
+            type: string
+          businessRegistrationNumber:
+            type: string
+          
+  CreditAddress:
+    type: object
+    properties:
+      addressLineOne:
+        type: string
+      addressLineTwo:
+        type: string
+      addressLineThree:
+        type: string
+      addressLineFour:
+        type: string
+      cityName:
+        type: string
+      provinceCd:
+        type: string
+      countryCd:
+        type: string
+      civicNumber:
+        type: string
+      streetName:
+        type: string
+  
+  CreditWorthiness:
+    type: object
+    properties:
+      primaryCreditStoreCd:
+        type: string
+        description: "Represent the CreditScore code identified by Fico as the primary among creditScoreList  returned from external bureau"
+      primaryCreditScoreTypeCd:
+        type: string
+      bureauDecisionCode:
+        type: object
+        properties:
+          code:
+            type: string
+          description:
+            type: array
+            items:
+              type: object
+              properties:
+                locale:
+                  type: string
+                description:
+                  type: string
+      creditProgram:
+        $ref: '#/definitions/CreditProgram'
+
+  CreditProgram:
+    type: object
+    properties:
+      creditProgramName:
+        type: string
+      creditClassCd:
+        type: string
+      creditClassDate:
+        type: string
+        format: date
+      creditDecisionCd:
+        type: string
+      creditDecisionDate:
+        type: string
+        format: date
+      riskLevelNumber:
+        type: string
+      riskLevelDecisionCd:
+        type: string
+      riskLevelDt:
+        type: string
+        format: date-time
+
+  
+#  CreditProfileToCreate:
+#    type: object
+#    description: The credit profile to create
+#    required:
+#      - billingAccountNumber
+#    properties:
+#      billingAccountNumber:
+#        type: string
+#      creditIdentification:
+#        $ref: '#/definitions/CreditIdentification'
+#      birthDate:
+#        type: string
+#        format: date
+#        description: The customer's birth date (YYYY-MM-DD)
+#      creditAuditInfo:
+#        type: object
+#        required:
+#          - orginatorApplicationId
+#        properties:
+#          originatorApplicationId:
+#            type: string
+#          channelOrganizationId:
+#            type: string
+#          userId:
+#            type: string
+            
+  CreditProfileToUpdate:
+    type: object
+    description: The credit profile to update
+    required:
+      - billingAccountNumber
+    properties:
+      billingAccountNumber:
+        type: string
+      creditIdentification:
+        $ref: '#/definitions/CreditIdentification'
+      birthDate:
+        type: string
+        format: date
+        description: The customer's birth date (YYYY-MM-DD)
+      creditAuditInfo:
+        type: object
+        required:
+          - orginatorApplicationId
+        properties:
+          originatorApplicationId:
+            type: string
+          channelOrganizationId:
+            type: string
+          userId:
+            type: string            
+      
+  TimePeriod:
+    type: object
+    description: 'A period of time, either as a deadline (endDateTime only) a startDateTime only, or both'
+    properties:
+      endDateTime:
+        type: string
+        format: date-time
+        description: 'End of the time period, using IETC-RFC-3339 format'
+      startDateTime:
+        type: string
+        format: date-time
+        description: 'Start of the time period, using IETC-RFC-3339 format. If you define a start, you must also define an end'
+        
+  EventSubscriptionInput:
+    type: object
+    description: >-
+      Sets the communication endpoint address the service instance must use to deliver notification information
+    required:
+      - callback
+    properties:
+      callback:
+        type: string
+        description: The callback being registered
+        example: 'https://fraudservice.telus.com/creditprofile/callback'
+      query:
+        type: string
+        description: Additional data to be passed. The query expression may be used to filter specific event types and/or any content of the event.
+  EventSubscription:
+    type: object
+    description: >-
+      Sets the communication endpoint address the service instance must use to deliver notification information
+    required:
+      - id
+      - callback
+    properties:
+      id:
+        type: string
+        description: Id of the listener
+      callback:
+        type: string
+        description: The callback being registered.
+      query:
+        type: string
+        description: Additional data to be passed.
+  
+  Error:
+    type: object
+    description: 'Used when an API throws an Error, typically with a HTTP error response-code (3xx, 4xx, 5xx)'
+    required:
+      - code
+      - reason
+    properties:
+      code:
+        type: string
+        description: Application error code
+      message:
+        type: string
+        description: The actual message of the error code
+      reason:
+        type: string
+        description: Explanation of the reason for the error which can be shown to a client user.
+#      status:
+#        type: string
+#        description: HTTP Error code extension
+#      referenceError:
+#        type: string
+#        format: uri
+#        description: URI of documentation describing the error.
